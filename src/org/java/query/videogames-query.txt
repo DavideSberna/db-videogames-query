@@ -1,0 +1,94 @@
+
+1. Selezionare tutte le software house americane (3)
+
+select sh.name , sh.city, sh.country  
+from software_houses sh
+where sh.country = 'United States';
+
+
+
+2. Selezionare tutti i giocatori della cittÃ di 'Rogahnland' (2)
+
+select p.name , p.lastname , p.city 
+from players p 
+where p.city = 'Rogahnland';
+
+
+
+
+3. Selezionare tutti i giocatori il cui nome finisce per "a" (220)
+
+select p.name, p.lastname 
+from players p 
+where p.name like '%a';
+
+
+
+4. Selezionare tutte le recensioni scritte dal giocatore con ID = 800 (11)
+
+select r.player_id , r.message , r.rating 
+from reviews r 
+where r.player_id = 800;
+
+
+
+5. Contare quanti tornei ci sono stati nell'anno 2015 (9)
+
+select count(id) 
+from tournaments t 
+where t.year = 2015
+
+
+
+6. Selezionare tutti i premi che contengono nella descrizione la parola 'facere' (2)
+
+select a.name , a.description 
+from awards a 
+where a.description like '%facere%';
+
+
+
+7. Selezionare tutti i videogame che hanno la categoria 2 (FPS) o 6 (RPG), mostrandoli una sola volta (del videogioco vogliamo solo l'ID) (287)
+
+select distinct cv.videogame_id
+from category_videogame cv 
+where cv.category_id = 2 
+	or cv.category_id = 6;
+	
+
+
+
+8. Selezionare tutte le recensioni con voto compreso tra 2 e 4 (2947)	
+	
+select *
+from reviews r 
+where r.rating >= 2 and r.rating <= 4;	
+
+
+
+9. Selezionare tutti i dati dei videogiochi rilasciati nell'anno 2020 (46)
+
+select v.name, v.overview  
+from videogames v 
+where year(v.release_date) = 2020;
+
+
+
+10. Selezionare gli id dei videogame che hanno ricevuto almeno una recensione da 5 stelle, mostrandoli una sola volta (443)
+
+select distinct v.id, v.name
+from videogames v 
+join reviews r 
+	on v.id = r.videogame_id 
+where r.rating = 5;
+
+
+11. Selezionare il numero e la media delle recensioni per il videogioco con ID = 412 (review number = 12, avg_rating = 3.16 circa)
+	
+select v.id , count(r.id) as 'review number', SUM(r.rating) / COUNT(r.id) AS 'avg_rating' 
+from videogames v 
+join reviews r 
+	on v.id = r.videogame_id 
+	where v.id = 412;
+	
+	
