@@ -83,6 +83,8 @@ join reviews r
 where r.rating = 5;
 
 
+
+
 11. Selezionare il numero e la media delle recensioni per il videogioco con ID = 412 (review number = 12, avg_rating = 3.16 circa)
 	
 select v.id , count(r.id) as 'review number', SUM(r.rating) / COUNT(r.id) AS 'avg_rating' 
@@ -92,3 +94,146 @@ join reviews r
 	where v.id = 412;
 	
 	
+	
+	
+12. Selezionare il numero di videogame che la software house con ID = 1 ha rilasciato nel 2018 (13)
+
+select count(v.id) as 'software house-id'
+from videogames v 
+where v.software_house_id  = 1 and year(v.release_date) = 2018;
+
+
+
+GROUP BY
+
+1. Contare quante software house ci sono per ogni paese (3)
+
+select count(sh.id) as 'count', sh.country 
+from software_houses sh 
+group by sh.country;
+
+
+
+2. Contare quante recensioni ha ricevuto ogni videogioco (del videogioco vogliamo solo l'ID) (500)
+
+select v.id, count(r.id) as 'numero recensioni'
+from videogames v
+join reviews r 
+	on v.id = r.videogame_id
+group by v.id 
+
+
+
+
+3. Contare quanti videogiochi hanno ciascuna classificazione PEGI (della classificazione PEGI vogliamo solo l'ID) (13)
+
+select  pl.name, count(v.id) 
+from videogames v 
+join pegi_label_videogame plv 
+	on v.id = plv.videogame_id 
+join pegi_labels pl 
+	on plv.pegi_label_id  = pl.id
+where pl.name like 'PEGI%'
+group by pl.name
+
+
+
+
+4. Mostrare il numero di videogiochi rilasciati ogni anno (11)
+
+select year(v.release_date) AS 'Anno', count(v.id) as 'Numero di Videogiochi'
+from videogames v
+group by year(v.release_date)
+group by year(v.release_date) asc;
+
+
+
+5. Contare quanti videogiochi sono disponbiili per ciascun device (del device vogliamo solo l'ID) (7)
+
+select dv.device_id as 'id' , count(dv.videogame_id) as 'numero videogames'
+FROM device_videogame dv
+group by dv.device_id
+
+
+
+
+6. Ordinare i videogame in base alla media delle recensioni (del videogioco vogliamo solo l'ID) (500)
+
+select r.videogame_id as 'id videogame'  , avg(r.rating) as 'media rating' 
+FROM reviews r 
+group by r.videogame_id 
+order by avg(r.rating)  asc  
+ 
+
+
+JOIN
+
+
+1. Selezionare i dati di tutti giocatori che hanno scritto almeno una recensione, mostrandoli una sola volta (996)
+
+select p.name , p.lastname , p.nickname, count(r.id)
+from players p 
+join reviews r
+	on p.id = r.player_id
+group by p.name, p.lastname, p.nickname
+having count(r.id) >= 1
+
+
+
+
+2. Sezionare tutti i videogame dei tornei tenuti nel 2016, mostrandoli una sola volta (226)
+
+select v.name , t.year as 'anno' 
+from videogames v 
+join tournament_videogame tv on v.id = tv.videogame_id 
+join tournaments t on tv.tournament_id = t.id 
+where t.year = 2016
+group by v.name 
+
+
+
+
+3. Mostrare le categorie di ogni videogioco (1718)
+
+select v.name, c.name 
+from videogames v 
+join category_videogame cv on v.id = cv.videogame_id 
+join categories c on cv.category_id = c.id 
+order by v.name asc 
+
+
+4. Selezionare i dati di tutte le software house che hanno rilasciato almeno un gioco dopo il 2020, mostrandoli una sola volta (6)
+
+select sh.name, count(v.id) as 'numero videogame' 
+from software_houses sh 
+join videogames v on sh.id = v.software_house_id 
+where year(v.release_date) > 2020
+group by sh.name
+
+
+
+5. Selezionare i premi ricevuti da ogni software house per i videogiochi che ha prodotto (55)
+
+select sh.name as 'software house', a.name as 'premio', v.name as 'videgame'
+from software_houses sh 
+join videogames v on sh.id = v.software_house_id 
+join award_videogame av on v.id = av.videogame_id  
+join awards a on av.award_id = a.id
+
+
+
+
+
+6. Selezionare categorie e classificazioni PEGI dei videogiochi che hanno ricevuto recensioni da 4 e 5 stelle, mostrandole una sola volta (3363)
+
+(non completo)
+
+select v.name, c.name AS 'Categoria', pl.name AS 'Classificazione PEGI', r.rating
+from videogames v
+join category_videogame cv on v.id = cv.videogame_id 
+join categories c on cv.category_id  = c.id 
+join pegi_label_videogame plv on v.id = plv.videogame_id
+join pegi_labels pl on plv.pegi_label_id = pl.id 
+join reviews r on v.id = r.videogame_id
+group by v.name, c.name, pl.name
+having r.rating >= 4 and r.rating <= 5
